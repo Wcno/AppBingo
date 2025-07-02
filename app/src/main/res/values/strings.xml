@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Lab6</string>
+    <string name="title_activity_pantalla_inicio">PantallaInicio</string>
+    <string name="title_activity_pantalla_bingo">PantallaBingo</string>
+</resources>
