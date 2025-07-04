@@ -1,0 +1,67 @@
+/app/
+# === Archivos y carpetas de compilación ===
+.gradle/
+build/
+*/build/
+
+# === Configuraciones locales ===
+local.properties
+.idea/
+*.iml
+
+# === Archivos de sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Archivos de Android Studio ===
+.cxx/
+captures/
+.externalNativeBuild/
+*.apk
+*.ap_
+
+# === Configuraciones de ejecución ===
+*.log
+*.keystore
+*.jks
+
+# === Archivos generados por el IDE ===
+*.class
+*.dex
+*.jar
+*.war
+*.ear
+*.so
+*.obj
+*.hprof
+
+# === Kotlin/Java compilados ===
+*.class
+*.kotlin_module
+
+# === Archivos de respaldo o temporales ===
+*.tmp
+*.swp
+*~.nib
+*~
+*.bak
+*.orig
+
+# === Archivos de usuario ===
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/.name
+
+# === Recomendado para GitHub Actions ===
+.github/
+
+# === NDK artifacts ===
+obj/
+
+# === Crashlytics / Firebase ===
+crashlytics-build.properties
+fabric.properties
