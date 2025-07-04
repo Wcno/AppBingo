@@ -2,6 +2,7 @@ package com.example.lab6
 
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,16 +13,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.shape.CircleShape
 import java.util.*
 
 @Composable
 fun PantallaBingo(dimension: Int, uid: String) {
     val context = LocalContext.current
 
-    // ✅ Corregido: tts declarado fuera del bloque
     val tts = remember {
         TextToSpeech(context, null).apply {
             language = Locale("es", "ES")
@@ -29,7 +32,7 @@ fun PantallaBingo(dimension: Int, uid: String) {
     }
 
     var tablero by remember { mutableStateOf(generarTablero(dimension)) }
-    var marcado by remember { mutableStateOf(MutableList(dimension * dimension) { false }) }
+    val marcado = remember { mutableStateListOf<Boolean>().apply { repeat(dimension * dimension) { add(false) } } }
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -38,7 +41,7 @@ fun PantallaBingo(dimension: Int, uid: String) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Juego de Bingo - UID: $uid", fontWeight = FontWeight.Bold)
+        Text("Juego de Bingo - UID: $uid", fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -53,9 +56,14 @@ fun PantallaBingo(dimension: Int, uid: String) {
                 Box(
                     modifier = Modifier
                         .size(50.dp)
+                        .border(
+                            width = 3.dp,
+                            color = Color.Red,
+                            shape = CircleShape
+                        )
                         .background(
-                            if (marcadoActual) Color.Blue else Color(0xFF673AB7),
-                            shape = MaterialTheme.shapes.medium
+                            color = if (marcadoActual) Color.Blue else Color(0xFF673AB7),
+                            shape = CircleShape
                         )
                         .clickable {
                             if (!marcadoActual) {
@@ -69,8 +77,9 @@ fun PantallaBingo(dimension: Int, uid: String) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (marcadoActual) "XX" else numero.toString(),
-                        color = Color.White
+                        text = if (marcadoActual) "X" else numero.toString(),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -80,7 +89,8 @@ fun PantallaBingo(dimension: Int, uid: String) {
 
         Button(onClick = {
             tablero = generarTablero(dimension)
-            marcado = MutableList(dimension * dimension) { false }
+            marcado.clear()
+            repeat(dimension * dimension) { marcado.add(false) }
         }) {
             Text("Regenerar Carta")
         }
@@ -106,13 +116,35 @@ fun generarTablero(dimension: Int): List<Int> {
 }
 
 fun validarBingo(marcado: List<Boolean>, dimension: Int): Boolean {
+    // Horizontal
     for (i in 0 until dimension) {
         if ((0 until dimension).all { j -> marcado[i * dimension + j] }) return true
     }
+
+    // Vertical
     for (j in 0 until dimension) {
         if ((0 until dimension).all { i -> marcado[i * dimension + j] }) return true
     }
+
+    // Diagonal ↘
     if ((0 until dimension).all { i -> marcado[i * dimension + i] }) return true
+
+    // Diagonal
     if ((0 until dimension).all { i -> marcado[i * dimension + (dimension - i - 1)] }) return true
+
+    for (i in 0 until dimension - 1) {
+        for (j in 0 until dimension - 1) {
+            val idx = i * dimension + j
+            if (
+                marcado[idx] &&
+                marcado[idx + 1] &&
+                marcado[idx + dimension] &&
+                marcado[idx + dimension + 1]
+            ) {
+                return true
+            }
+        }
+    }
+
     return false
 }
